@@ -403,9 +403,11 @@ def register_user(request, extra_context=None):
 
     course_id = request.GET.get('course_id')
     email_opt_in = request.GET.get('email_opt_in')
+    course = modulestore().get_course(course_id)
 
     context = {
         'course_id': course_id,
+        'registration_password':course.registration_password,
         'email_opt_in': email_opt_in,
         'email': '',
         'enrollment_action': request.GET.get('enrollment_action'),

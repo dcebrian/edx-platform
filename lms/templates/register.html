@@ -91,6 +91,19 @@
           text("${_('Processing your account information')}");
       }
     }
+	var removeFromURL = function(url_string, variable_name) {
+		var URL = String(url_string);
+		var regex = new RegExp( "\\?" + variable_name + "=[^&]*&?", "gi");
+		URL = URL.replace(regex,'?');
+		regex = new RegExp( "\\&" + variable_name + "=[^&]*&?", "gi");
+		URL = URL.replace(regex,'&');
+		URL = URL.replace(/(\?|&)$/,'');
+		regex = null;
+		return URL;
+	};
+	var stripped_url = top.location.href;
+	stripped_url = removeFromURL(stripped_url, 'k');
+	window.history.pushState("object or string", "Title", stripped_url);
   </script>
 </%block>
 
@@ -104,6 +117,7 @@
 </section>
 
 <section class="register container">
+% if (registration_password!='' and registration_password==request.GET.get("k")) or registration_password=='':
   <section role="main" class="content">
     <form role="form" id="register-form" method="post" data-remote="true" action="/create_account" novalidate>
       <input type="hidden" name="csrfmiddlewaretoken" value="${ csrf_token }">
@@ -385,4 +399,7 @@
     <%include file="${sidebar_file}" />
 
   </aside>
+% else:
+Ya está registrado o está usando un password erróneo
+% endif
 </section>

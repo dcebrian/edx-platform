@@ -86,6 +86,11 @@ class InheritanceMixin(XBlockMixin):
         default="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
         display_name=_("Secret Token String for Annotation")
     )
+    registration_password = String(
+        help="Password para registrarse en este curso (letras/numeros)",
+        default="",
+        display_name="Password para registrarse en este curso (letras/numeros)",
+        scope=Scope.settings)
     graceperiod = Timedelta(
         help="Amount of time after the due date that submissions will be accepted",
         scope=Scope.settings,

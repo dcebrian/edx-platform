@@ -29,11 +29,53 @@
 </%block>
 
 <%block name="js_extra">
-
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css">
+  <div id="dialog-forma">
+	<form>
+	    <label for="name">Password:</label>
+	    <input type="text" name="name" id="txt2" class="text ui-widget-content ui-corner-all" />
+	</form>
+  </div>
   <script type="text/javascript">
   (function() {
-    $(".register").click(function(event) {
-      $("#class_enroll_form").submit();
+    var reg_url="${reverse('course-specific-register', args=[course.id])}?course_id=${course.id}&enrollment_action=enroll";
+	$("#dialog-forma").dialog({
+		autoOpen: false,
+		modal: true,
+		buttons: {
+		    "Ok": function() {
+		        var text2 = $("#txt2");
+				
+				$.post('http://...',
+						{password:text2.val(),courseid:'${course.id}'},
+						function(data){
+								if(typeof data!='undefined'){
+									if(data==''){
+										$('#register_error').html("La contraseña no es correcta").css("display", "block");
+									}else{
+										location.href = "${reverse('register_user')}?course_id=${course.id | u}&enrollment_action=enroll&k="+data;
+									}
+								}else{
+									$('#register_error').html("La contraseña no es correcta").css("display", "block");
+								}
+
+						}
+				);
+		        $(this).dialog("close");
+		    },
+		    "Cancel": function() {
+		        $(this).dialog("close");
+		    }
+		}
+	});
+	$(".register").click(function(event){
+	  % if course.registration_password!='':
+			$('#register_error').css("display", "none");
+			$("#dialog-forma").dialog("open");
+	  %else:
+      		$("#class_enroll_form").submit();
+	  %endif
+	
       event.preventDefault();
     });
 
