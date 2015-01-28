@@ -135,7 +135,8 @@ class CapaFields(object):
             {"display_name": _("Finished"), "value": SHOWANSWER.FINISHED},
             {"display_name": _("Correct or Past Due"), "value": SHOWANSWER.CORRECT_OR_PAST_DUE},
             {"display_name": _("Past Due"), "value": SHOWANSWER.PAST_DUE},
-            {"display_name": _("Never"), "value": SHOWANSWER.NEVER}]
+            {"display_name": _("Never"), "value": SHOWANSWER.NEVER},
+            {"display_name": "No Answer", "value": SHOWANSWER.NOANSWER}]
     )
     force_save_button = Boolean(
         help=_("Whether to force the save button to appear on the page"),
@@ -422,7 +423,10 @@ class CapaMixin(CapaFields):
         # The logic flow is a little odd so that _('xxx') strings can be found for
         # translation while also running _() just once for each string.
         _ = self.runtime.service(self, "i18n").ugettext
-        check = _('Check')
+        if self.showanswer==SHOWANSWER.NOANSWER:
+            check = _('Ok')
+        else:
+            check = _('Check')
         final_check = _('Final Check')
 
         # Apply customizations if present
@@ -635,6 +639,7 @@ class CapaMixin(CapaFields):
         context = {
             'problem': content,
             'id': self.location.to_deprecated_string(),
+            'noanswer': self.showanswer==SHOWANSWER.NOANSWER,
             'check_button': check_button,
             'check_button_checking': check_button_checking,
             'reset_button': self.should_show_reset_button(),
@@ -713,6 +718,8 @@ class CapaMixin(CapaFields):
         if self.showanswer == '':
             return False
         elif self.showanswer == SHOWANSWER.NEVER:
+            return False
+        elif self.showanswer == SHOWANSWER.NOANSWER:
             return False
         elif self.runtime.user_is_staff:
             # This is after the 'never' check because admins can see the answer

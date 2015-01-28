@@ -1382,6 +1382,8 @@ class StringResponse(LoncapaResponse):
         Should be removed soon. When to remove it, is up to Lyla Fisher.
         """
         _ = self.capa_system.i18n.ugettext
+        if 'NOANSWER' in expected:
+            return True
         # backward compatibility, should be removed in future.
         if self.backward:
             return self.check_string_backward(expected, given)
